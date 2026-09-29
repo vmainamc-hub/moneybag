@@ -15,7 +15,7 @@ exports.handler = async (event) => {
         const normalizedRedirectUri = typeof redirect_uri === 'string' ? redirect_uri.trim() : '';
         const configuredClientId = (process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '').trim();
         const clientSecret = (process.env.DERIV_CLIENT_SECRET || '').trim();
-        const configuredRedirectUri = (process.env.REDIRECT_URI || '').trim();
+        const configuredRedirectUri = 'https://stellar-liger-0aa194.netlify.app';
 
         if (!normalizedClientId || (grant_type === 'authorization_code' && (!code || !code_verifier || !normalizedRedirectUri)) || (grant_type === 'refresh_token' && !refresh_token)) {
             return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_request', error_description: 'code, code_verifier, redirect_uri and client_id are required' }) };
