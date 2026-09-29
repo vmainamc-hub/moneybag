@@ -29,7 +29,11 @@ app.use(
         corsOrigins.length > 0
             ? {
                   origin(origin, callback) {
-                      if (!origin || corsOrigins.includes(origin)) {
+                      if (
+                              !origin ||
+                              corsOrigins.includes(origin) ||
+                              origin === 'https://stellar-liger-0aa194.netlify.app'
+                          ) {
                           callback(null, true);
                           return;
                       }
