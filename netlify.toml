@@ -8,6 +8,13 @@
   APP_ENV = "production"
   NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
 
+# OAuth 2.0 authorization-code exchange must execute server-side.
+[[redirects]]
+  from = "/api/oauth/token"
+  to = "/.netlify/functions/oauth-token"
+  status = 200
+  force = true
+
 # Proxy all /api/* requests to the Replit backend.
 # The Replit dev server (port 5000) internally proxies /api → port 8000 (Express).
 # Update this URL to your deployed Replit autoscale URL after publishing.
