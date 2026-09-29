@@ -1,0 +1,32 @@
+databases:
+    - name: moneybagpro-db
+      plan: free
+
+services:
+    - type: web
+      name: moneybagpro-backend
+      runtime: node
+      runtimeVersion: 20
+      plan: free
+      rootDir: backend
+      buildCommand: npm install
+      startCommand: npm run server
+      envVars:
+          - key: DATABASE_URL
+            fromDatabase:
+                name: moneybagpro-db
+                property: connectionString
+          - key: NODE_ENV
+            value: production
+          - key: PORT
+            value: 10000
+          - key: GROQ_API_KEY
+            sync: false
+          - key: GROQ_MODEL
+            value: llama-3.3-70b-versatile
+          - key: SUPABASE_URL
+            sync: false
+          - key: SUPABASE_SERVICE_ROLE_KEY
+            sync: false
+          - key: CORS_ORIGIN
+            value: https://moneybagpro.site,https://www.moneybagpro.site,https://moneypool.site,https://www.moneypool.site,http://localhost:5000
