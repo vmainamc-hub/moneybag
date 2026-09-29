@@ -64,6 +64,12 @@ export default defineConfig({
         template: './index.html',
     },
     server: {
+        // Keep the public bot XML library in the production dist output.
+        // Best Bots loads these strategies by absolute URL at runtime.
+        publicDir: {
+            name: 'public',
+            copyOnBuild: true,
+        },
         port: 5000,
         host: '0.0.0.0',
         compress: true,
