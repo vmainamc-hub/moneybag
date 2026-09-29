@@ -178,8 +178,26 @@ export class OAuthTokenExchangeService {
                 }),
             });
 
-            // Parse response
-            const data: TokenExchangeResponse = await response.json();
+            // Parse response. A missing/broken token function (e.g. a Netlify build
+            // that failed to load it) returns a non-JSON body; report that clearly
+            // instead of leaking a JSON parse error.
+            let data: TokenExchangeResponse;
+            try {
+                data = await response.json();
+            } catch {
+                ErrorLogger.error('OAuth', `Token endpoint returned non-JSON response (HTTP ${response.status})`);
+                return {
+                    error: 'token_endpoint_unavailable',
+                    error_description: `The login service did not respond correctly (HTTP ${response.status}). Please try again shortly.`,
+                };
+            }
+
+            if (!response.ok && !data.error) {
+                return {
+                    error: 'token_exchange_failed',
+                    error_description: `The login service returned HTTP ${response.status}.`,
+                };
+            }
 
             // Check for errors in response
             if (data.error) {
@@ -262,6 +280,13 @@ export class OAuthTokenExchangeService {
                             error instanceof Error ? error.message : 'Failed to fetch accounts after authentication',
                     };
                 }
+            }
+
+            if (!data.access_token) {
+                return {
+                    error: 'invalid_token_response',
+                    error_description: 'The login service did not return an access token.',
+                };
             }
 
             return data;
