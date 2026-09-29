@@ -174,40 +174,54 @@ function storeLegacyAccounts(accounts: import('@/hooks/useOAuthCallback').Legacy
  */
 function App() {
     const { isProcessing, isValid, params, legacyAccounts, error, cleanupURL } = useOAuthCallback();
+    const [oauthBootstrapReady, setOauthBootstrapReady] = React.useState(false);
 
     useAccountSwitching();
 
-    // ── Legacy Deriv OAuth: tokens arrive directly in the URL ────────────────
+    // Complete the callback before mounting AppRoot. AppRoot initializes the
+    // singleton Deriv socket immediately; mounting it before auth_info exists
+    // opens the public socket and prevents the later OAuth token from upgrading
+    // that connection.
     React.useEffect(() => {
-        if (!isProcessing && legacyAccounts.length > 0) {
-            // IMPORTANT: Clean up URL BEFORE storing accounts to prevent re-processing on reload
+        if (isProcessing) return;
+
+        if (legacyAccounts.length > 0) {
             cleanupURL();
             storeLegacyAccounts(legacyAccounts);
-            // Note: DO NOT reload the page. Let the normal app initialization pick up the
-            // stored token from localStorage. The api_base.init() in AppRoot will authorize.
+            setOauthBootstrapReady(true);
+            return;
         }
-    }, [isProcessing, legacyAccounts, cleanupURL]);
 
-    // ── New OAuth2 PKCE: exchange code for access token ───────────────────────
-    React.useEffect(() => {
-        if (!isProcessing && isValid && params.code) {
-            OAuthTokenExchangeService.exchangeCodeForToken(params.code)
-                .then(response => {
-                    if (response.access_token) {
-                        cleanupURL();
-                    } else if (response.error) {
+        if (isValid && params.code) {
+            let cancelled = false;
+            (async () => {
+                try {
+                    const response = await OAuthTokenExchangeService.exchangeCodeForToken(params.code!);
+                    if (cancelled) return;
+                    if (!response.access_token) {
                         console.error('❌ Token exchange failed:', response.error, response.error_description);
-                        cleanupURL();
                     }
-                })
-                .catch(err => {
-                    console.error('❌ Token exchange request failed:', err);
-                    cleanupURL();
-                });
-        } else if (!isProcessing && error) {
-            console.error('OAuth callback error:', error);
+                } catch (err) {
+                    if (!cancelled) console.error('❌ Token exchange request failed:', err);
+                } finally {
+                    if (!cancelled) {
+                        cleanupURL();
+                        setOauthBootstrapReady(true);
+                    }
+                }
+            })();
+            return () => {
+                cancelled = true;
+            };
         }
-    }, [isProcessing, isValid, params.code, error, cleanupURL]);
+
+        if (error) console.error('OAuth callback error:', error);
+        setOauthBootstrapReady(true);
+    }, [isProcessing, isValid, params.code, legacyAccounts, error, cleanupURL]);
+
+    if (!oauthBootstrapReady) {
+        return <ChunkLoader message={localize('Connecting to Deriv...')} />;
+    }
 
     return (
         <ErrorBoundary>
