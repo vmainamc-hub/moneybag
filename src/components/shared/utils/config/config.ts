@@ -956,7 +956,7 @@ export const getDomainConfig = (activeHostname = window.location.hostname): Doma
     return {
         clientId: process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '',
         appId: process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '71937',
-        redirectUri: process.env.REDIRECT_URI || `${window.location.origin}/callback`,
+        redirectUri: process.env.REDIRECT_URI || window.location.origin,
         botsFolder: process.env.BOTS_FOLDER || DEFAULT_BOTS_FOLDER,
         canonicalHost: hostname,
         // MoneyBag production uses Deriv OAuth 2.0 Authorization Code + PKCE.
@@ -1419,7 +1419,7 @@ export const generateOAuthURL = async (prompt?: string, domainConfig = getDomain
         const { clientId, appId, redirectUri, includeLegacyAppIdInOAuth } = {
             clientId: domainCfg.clientId || process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
             appId: domainCfg.appId,
-            redirectUri: domainCfg.redirectUri || process.env.REDIRECT_URI || `${window.location.origin}/callback`,
+            redirectUri: domainCfg.redirectUri || process.env.REDIRECT_URI || window.location.origin,
             includeLegacyAppIdInOAuth: domainCfg.includeLegacyAppIdInOAuth,
         };
 
