@@ -22,7 +22,7 @@ jobs:
           set -euo pipefail
           rm -rf /tmp/moneybagpro
           mkdir -p /tmp/moneybagpro
-          curl -L --fail --retry 3             https://github.com/learninghub44/moneybagpro/archive/refs/heads/main.tar.gz             -o /tmp/moneybagpro/source.tar.gz
+          curl -L --fail --retry 3 https://github.com/learninghub44/moneybagpro/archive/refs/heads/main.tar.gz -o /tmp/moneybagpro/source.tar.gz
           tar -xzf /tmp/moneybagpro/source.tar.gz -C /tmp/moneybagpro
           test -d /tmp/moneybagpro/moneybagpro-main
 
@@ -32,10 +32,11 @@ jobs:
           set -euo pipefail
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a /tmp/moneybagpro/moneybagpro-main/. .
+          rm -rf .github/workflows
           test -f package.json
           test -f src/main.tsx
 
-      - name: Commit complete application
+      - name: Commit complete deployable application
         shell: bash
         run: |
           set -euo pipefail
@@ -46,5 +47,5 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "Sync full MoneyBagPro application from original repository"
+          git commit -m "Import full deployable MoneyBagPro application"
           git push origin HEAD:main
