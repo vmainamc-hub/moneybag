@@ -1417,9 +1417,9 @@ export const generateOAuthURL = async (prompt?: string, domainConfig = getDomain
         // CLIENT_ID, APP_ID, and redirect URI from DOMAIN_CONFIG)
         const domainCfg = domainConfig;
         const { clientId, appId, redirectUri, includeLegacyAppIdInOAuth } = {
-            clientId: domainCfg.clientId,
+            clientId: domainCfg.clientId || process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
             appId: domainCfg.appId,
-            redirectUri: domainCfg.redirectUri,
+            redirectUri: domainCfg.redirectUri || process.env.REDIRECT_URI || `${window.location.origin}/callback`,
             includeLegacyAppIdInOAuth: domainCfg.includeLegacyAppIdInOAuth,
         };
 
