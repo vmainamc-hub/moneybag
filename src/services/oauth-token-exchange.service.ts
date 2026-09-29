@@ -282,21 +282,26 @@ export class OAuthTokenExchangeService {
      */
     static async refreshAccessToken(refreshToken: string): Promise<TokenExchangeResponse> {
         try {
-            const baseURL = this.getOAuth2BaseURL();
-            const tokenEndpoint = `${baseURL}token`;
+            const tokenEndpoint = '/api/oauth/token';
 
-            const requestBody = new URLSearchParams({
-                grant_type: 'refresh_token',
-                refresh_token: refreshToken,
-            });
+            const { clientId } = getDomainConfig();
+            if (!clientId) {
+                return {
+                    error: 'invalid_client',
+                    error_description: 'CLIENT_ID is not configured. Please check DOMAIN_CONFIG.',
+                };
+            }
 
             const response = await fetch(tokenEndpoint, {
                 method: 'POST',
-                credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: requestBody.toString(),
+                body: JSON.stringify({
+                    grant_type: 'refresh_token',
+                    refresh_token: refreshToken,
+                    client_id: clientId,
+                }),
             });
 
             const data: TokenExchangeResponse = await response.json();
