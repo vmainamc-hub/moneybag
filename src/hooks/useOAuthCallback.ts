@@ -174,7 +174,7 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
                 legacyAccounts: [],
                 error: 'Missing state parameter - potential security threat',
             });
-            window.location.replace(window.location.origin);
+            cleanupURL();
             return;
         }
 
@@ -188,14 +188,12 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
                 legacyAccounts: [],
                 error: 'CSRF token validation failed',
             });
-            // IMPORTANT: strip code/state from the URL and send the user back to a
-            // clean landing page. Without this, the stray `code` param stays in the
-            // address bar, RootGate sees `code` present and treats it as "returning
-            // from OAuth", and silently forwards the user into /app while logged
-            // out — no error is ever shown to them, it just looks like "login
-            // doesn't work". This mirrors the missing-state branch above so both
-            // failure paths behave the same way.
-            window.location.replace(window.location.origin);
+            // IMPORTANT: strip code/state from the URL (so RootGate does not treat a
+            // stray `code` as "returning from OAuth" and forward a logged-out user
+            // into /app) and let App render an explicit error + retry screen using
+            // the `error` value above, rather than hard-reloading to the landing
+            // page where the failure is invisible.
+            cleanupURL();
             return;
         }
 
