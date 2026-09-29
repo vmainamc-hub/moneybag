@@ -14,7 +14,6 @@ exports.handler = async (event) => {
         const normalizedClientId = typeof client_id === 'string' ? client_id.trim() : '';
         const normalizedRedirectUri = typeof redirect_uri === 'string' ? redirect_uri.trim() : '';
         const configuredClientId = (process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '').trim();
-        const clientSecret = (process.env.DERIV_CLIENT_SECRET || '').trim();
         const configuredRedirectUri = 'https://stellar-liger-0aa194.netlify.app';
 
         if (!normalizedClientId || (grant_type === 'authorization_code' && (!code || !code_verifier || !normalizedRedirectUri)) || (grant_type === 'refresh_token' && !refresh_token)) {
@@ -23,11 +22,10 @@ exports.handler = async (event) => {
         if (!configuredClientId || normalizedClientId !== configuredClientId) {
             return { statusCode: 401, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_client', error_description: 'The OAuth client_id is not configured correctly.' }) };
         }
-        if (!clientSecret) {
-            return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'server_configuration_error', error_description: 'DERIV_CLIENT_SECRET is not configured on the server.' }) };
-        }
+        // Public PKCE client (token_endpoint_auth_method=none): do not send client_secret
+        // or an Authorization: Basic header to the Deriv token endpoint.
         if (grant_type === 'refresh_token') {
-            const refreshParams = new URLSearchParams({ grant_type: 'refresh_token', client_id: configuredClientId, client_secret: clientSecret, refresh_token });
+            const refreshParams = new URLSearchParams({ grant_type: 'refresh_token', client_id: configuredClientId, refresh_token });
             const refreshResponse = await fetch('https://auth.deriv.com/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: refreshParams.toString() });
             const refreshData = await refreshResponse.json();
             return { statusCode: refreshResponse.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(refreshData) };
@@ -40,7 +38,6 @@ exports.handler = async (event) => {
         const params = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: configuredClientId,
-            client_secret: clientSecret,
             code,
             code_verifier,
             redirect_uri: configuredRedirectUri,
