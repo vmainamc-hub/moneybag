@@ -5,6 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  APP_ENV = "production"
   NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
 
 # Proxy all /api/* requests to the Replit backend.
@@ -12,7 +13,7 @@
 # Update this URL to your deployed Replit autoscale URL after publishing.
 [[redirects]]
   from = "/api/*"
-  to = "https://439a6b4c-93b6-40a3-9d2a-406052ed76f2-00-34dshrqu4dsru.janeway.replit.dev/api/:splat"
+  to = "https://deriv-bot-backend-4y8v.onrender.com/api/:splat"
   status = 200
   force = true
 
