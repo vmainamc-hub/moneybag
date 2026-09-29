@@ -1,0 +1,178 @@
+@use 'components/shared/styles/devices' as *;
+
+/** @define dc-drawer */
+.dc-drawer {
+    $toggler-width: 16px;
+    $toggler-hit-area: 32px;
+
+    position: fixed;
+    will-change: transform;
+    transition: transform 0.3s ease;
+    background: var(--general-main-2);
+    overflow: visible;
+
+    &--left {
+        display: flex;
+        flex-direction: row-reverse;
+        right: calc(100vw - 16px);
+
+        .dc-drawer__toggle {
+            right: 0;
+            transform: translateY(-50%) translateX(50%);
+        }
+    }
+
+    &--right {
+        display: flex;
+        flex-direction: row;
+        left: calc(100vw - 16px);
+
+        .dc-drawer__toggle {
+            left: 0;
+            transform: translateY(-50%) translateX(-50%);
+        }
+    }
+
+    @include mobile-or-tablet-screen {
+        width: 100vw !important;
+        // Reserve space for the fixed Execution/Run controls bar
+        // (.controls__section — always position:fixed, bottom:0, z-index 8,
+        // roughly --run-panel-mobile-controls-height tall) that sits below
+        // this drawer at all times on mobile. This didn't account for that
+        // bar's height before, so the drawer's closed-state "peek" strip
+        // (the Summary/Transactions/Journal tab labels + latest trade
+        // result) overlapped the opaque controls bar — which has a higher
+        // z-index — and rendered hidden behind it instead of visible above
+        // it. Same reasoning applies when open, so it isn't scoped to
+        // &--open only.
+        height: calc(100% - 10.1rem - var(--run-panel-mobile-controls-height, 7.6rem)) !important;
+        top: calc(100% - 9.8rem - var(--run-panel-mobile-controls-height, 7.6rem)) !important;
+    }
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+
+        &--left {
+            padding-inline-end: $toggler-hit-area;
+        }
+
+        &--right {
+            padding-inline-start: $toggler-hit-area;
+        }
+
+        @include mobile-or-tablet-screen {
+            height: calc(100% - 3.6rem);
+        }
+    }
+
+    &__header {
+        border-bottom: 1px solid var(--general-section-1);
+        line-height: 40px;
+        font-weight: 700;
+        font-size: 1.6em;
+    }
+
+    &__content {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    &__footer {
+        background-color: var(--general-main-2);
+        border-top: 1px solid var(--general-section-1);
+        line-height: 40px;
+        font-weight: 700;
+        font-size: 1.6em;
+        align-items: center;
+    }
+
+    &__toggle {
+        align-items: center;
+        border: 1px solid var(--border-disabled);
+        border-radius: 999px;
+        box-shadow: 0 0.8rem 2rem rgb(15 23 42 / 18%);
+        display: flex;
+        position: absolute;
+        width: $toggler-hit-area;
+        height: 6.4rem;
+        min-height: 6.4rem;
+        top: 50%;
+        transform: translateY(-50%);
+        justify-content: center;
+        background: linear-gradient(180deg, rgb(255 255 255 / 18%), rgb(255 255 255 / 0%)), var(--general-main-1);
+        cursor: pointer;
+        z-index: 3;
+
+        @include mobile-or-tablet-screen {
+            position: absolute;
+            // This is the ONLY way back to the tabs/navigation on mobile while
+            // the run panel is open (main.scss hides .dc-tabs__list with
+            // visibility:hidden in that state) — so it has to be unmissable.
+            // Was 4.8rem x 3.2rem poking out just 1.6rem above the drawer;
+            // bumped to a bigger, higher-contrast pill that's obviously
+            // tappable instead of blending into the header strip above it.
+            top: -2rem;
+            left: 50%;
+            right: auto;
+            width: 6.4rem;
+            height: 4rem;
+            min-height: 4rem;
+            transform: translateX(-50%);
+            justify-content: center;
+            background-color: #17130f;
+            border: 1px solid rgba(200, 164, 93, 0.55);
+            box-shadow: 0 0.4rem 1.2rem rgb(0 0 0 / 35%);
+            z-index: 5;
+        }
+
+        svg {
+            // var(--text-general) was resolving to a near-invisible color
+            // against some header/theme backgrounds — the same bug already
+            // fixed on the mobile hamburger and account-switcher balance
+            // button. Hardcoded white guarantees the chevron is always
+            // visible regardless of theme.
+            fill: var(--text-general);
+
+            @include mobile-or-tablet-screen {
+                fill: #ffffff;
+            }
+        }
+
+        &-icon {
+            transition: 0.25s ease;
+            width: 1.8rem;
+            height: 1.8rem;
+
+            &--left {
+                transform: rotate(0);
+            }
+
+            &--right {
+                transform: rotate(180deg);
+            }
+        }
+
+        &--open > &-icon {
+            &--left {
+                transform: rotate(180deg);
+            }
+
+            &--right {
+                transform: rotate(0);
+            }
+
+            @include mobile-or-tablet-screen {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    &--open {
+        @include mobile-or-tablet-screen {
+            transform: translateY(calc(-100% + 1.6rem));
+        }
+    }
+}

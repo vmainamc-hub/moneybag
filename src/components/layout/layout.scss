@@ -1,0 +1,47 @@
+@use 'components/shared/styles/mixins' as *;
+
+.layout {
+    --app-header-height: 4rem;
+    // Total height of everything stacked above the scrollable body — the
+    // community ticker banner plus the header. Anything fixed-positioned
+    // that needs to sit below all of that top chrome (run panel, tab
+    // content, sidebars) should offset against this, not
+    // --app-header-height alone, since that only ever measures the header
+    // itself and doesn't know the ticker banner exists above it. The
+    // fallback here assumes the ticker is present (it is, for every
+    // domain, by default); Layout measures the real combined height on
+    // mount via ResizeObserver and overrides this precisely, including the
+    // case where a domain has no social links configured and the ticker
+    // doesn't render at all.
+    --app-chrome-height: calc(var(--app-header-height) + 3.4rem);
+
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--rm-shell-run-panel);
+
+    @include mobile-or-tablet-screen {
+        --app-header-height: calc(5rem + env(safe-area-inset-top, 0px));
+        --app-chrome-height: calc(var(--app-header-height) + 3.4rem);
+    }
+
+    .deriv-header {
+        flex: 0 0 var(--app-header-height);
+        position: sticky;
+        top: 0;
+        z-index: 30000;
+        background: var(--rm-shell-top);
+        height: var(--app-header-height);
+        min-height: var(--app-header-height);
+    }
+
+    &.quick-strategy-active {
+        .deriv-header {
+            @include mobile-or-tablet-screen {
+                z-index: 10000;
+            }
+        }
+    }
+}

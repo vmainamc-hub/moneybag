@@ -1,0 +1,47 @@
+.app-header {
+    &__logo {
+        padding-inline-start: 1.6rem;
+        padding-inline-end: 1.6rem;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        img {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            object-position: center left;
+            max-width: 180px;
+        }
+
+        &-text {
+            margin-left: 8px;
+        }
+    }
+}
+
+.brand-name-text {
+    font-size: 1.5rem;
+    letter-spacing: 0.6px;
+    color: var(--domain-primary, var(--text-prominent));
+    font-weight: 800;
+    white-space: nowrap;
+    padding: 0.4rem 1.2rem;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 0;
+    display: inline-block;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+
+    &:hover {
+        filter: brightness(1.15);
+        transform: translateY(-1px);
+    }
+}

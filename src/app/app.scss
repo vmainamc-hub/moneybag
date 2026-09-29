@@ -1,0 +1,125 @@
+// ─── White / Blue Theme ────────────────────────────────────────────────────
+// Content areas are white/light; the header and nav strip stay dark navy
+// (matches the reference layout: white page body, navy nav bar, blue accent
+// buttons) instead of the previous all-navy theme.
+:root {
+    // Shell background layers
+    --rm-shell-bg: #f7f9fc;
+    --rm-shell-run-panel: #ffffff;
+    --rm-shell-section: #eef3fb;
+    --rm-shell-section-2: #e4ecf9;
+    --rm-shell-top: #001840;
+    --rm-shell-top-light: #0a1a38;
+    --rm-shell-nav: #001840;
+
+    // Text colours
+    --rm-shell-text: #10213f;
+    --rm-shell-header-text: #ffffff;
+    --rm-shell-panel-text: #33415c;
+    --rm-shell-panel-text-muted: #6b7a94;
+
+    // Accent / borders — genuinely blue now, not the old "gold" name left
+    // over from an earlier iteration.
+    --rm-shell-gold: #1a73e8;
+    --rm-shell-accent: #1a73e8;
+    --rm-shell-section-border: rgba(26, 115, 232, 0.15);
+    --rm-shell-auth-blue: #1a73e8;
+    --rm-shell-auth-border: rgba(26, 115, 232, 0.3);
+    --rm-shell-button-text: #ffffff;
+}
+
+// Match main content to the white/blue shell instead of forcing dark.
+body.theme--light,
+body {
+    --general-main-1: #ffffff;
+    --general-main-2: #f7f9fc;
+    --general-section-1: rgba(26, 115, 232, 0.06);
+    --general-section-2: #eef3fb;
+    --text-general: #10213f;
+    --text-less-prominent: #6b7a94;
+    --text-disabled: #a9b4c7;
+    --text-colored-background: #ffffff;
+    --border-normal: rgba(26, 115, 232, 0.15);
+    --border-hover: rgba(26, 115, 232, 0.35);
+    --button-primary-default: #1a73e8;
+    --button-primary-hover: #1560c4;
+    --icons: #1a73e8;
+    --icon-black-plus: #33415c;
+    --shadow-menu: 0 8px 32px rgba(16, 33, 63, 0.12);
+}
+
+.bot {
+    // Same bug class as --tab-content-height below: a static, pre-banner
+    // guess (100vh - 140px) that never accounted for real chrome height.
+    // Still used by Bot Builder's workspace canvas (#scratch_div) — the run
+    // panel's own former use of this variable was replaced with its own
+    // correctly-derived calc directly in run-panel.scss. 140px = 8.75rem;
+    // preserves the 4.75rem (8.75rem - assumed 4rem header) non-chrome
+    // portion, correcting only the header/chrome term.
+    --bot-content-height: calc(100vh - var(--app-chrome-height, var(--app-header-height, 4rem)) - 4.75rem);
+    --bot-content-width: calc(100vw - 366px);
+    --drawer-content-height: calc(100vh - 394px);
+    --drawer-content-height-no-stat: calc(100vh - 233px);
+    --drawer-scroll-height: calc(100vh - 365px);
+    --drawer-content-height-mobile: calc(100% - 23.3rem);
+    --drawer-content-height-mobile-no-stat: calc(100% - 10.8rem);
+    // Desktop default header height is 4rem (see layout.scss), so this was
+    // originally header(4rem) + 12.6rem of other reserved space. 9c2d296
+    // introduced --app-chrome-height (live-measured header+ticker-banner
+    // combined, via ResizeObserver) and swapped it into every OTHER
+    // fixed-position consumer of the header height (run-panel.scss,
+    // main.scss's mobile sidebar offset, --tab-content-height-mobile below) —
+    // but missed this one. So on any screen at or above the 1280px
+    // desktop-screen breakpoint, this stayed hardcoded to a pre-banner guess
+    // of the header's height alone, undercounting real chrome height by the
+    // ticker banner's height whenever it's shown (and, since the banner
+    // became collapsible, by a shifting amount depending on that state).
+    // Since .layout/.main-body clip overflow, a tab-content container sized
+    // too short for the real chrome above it means the bottom of the page's
+    // content silently gets clipped instead of just leaving a gap.
+    --tab-content-height: calc(100vh - var(--app-chrome-height, var(--app-header-height, 4rem)) - 12.6rem);
+    --tab-content-height-mobile: calc(100vh - var(--app-chrome-height, var(--app-header-height, 5rem)) - 4.8rem);
+    --zindex-drawer: 5;
+    --zindex-modal: 6;
+    --zindex-draggable-modal: 7;
+    --zindex-snackbar: 8;
+
+    &-dashboard {
+        background: var(--general-section-1);
+    }
+}
+
+.modal-root {
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    background: rgb(0 0 0 / 72%);
+    right: 0;
+    opacity: 0;
+    z-index: -1;
+}
+
+.modal-root:not(:empty) {
+    display: flex;
+    opacity: 1;
+    z-index: 10050;
+    touch-action: none;
+}
+
+strong {
+    font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}

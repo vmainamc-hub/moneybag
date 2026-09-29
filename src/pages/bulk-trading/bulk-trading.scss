@@ -1,0 +1,730 @@
+.bulk-trading-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 1.6rem;
+    // The fixed controls bar is always reserved; the stat strip above it only
+    // exists while the run-panel drawer is open, so its extra space is added
+    // back below via .main__container--with-run-panel-stat-strip instead of
+    // being reserved unconditionally (that used to leave a permanent empty
+    // gap under this page's content even when the drawer was closed).
+    padding-bottom: calc(var(--run-panel-mobile-controls-height, 7.6rem) + 2rem + env(safe-area-inset-bottom, 0px));
+    max-width: 52rem;
+    margin: 0 auto;
+    color: var(--text-general, #1a1a1a);
+    font-family: Arial, Helvetica, sans-serif;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .main__container--with-run-panel-stat-strip & {
+        padding-bottom: calc(
+            var(--run-panel-mobile-controls-height, 7.6rem) + var(--run-panel-mobile-stat-height, 12.8rem) + 2rem +
+                env(safe-area-inset-bottom, 0px)
+        );
+    }
+}
+
+.bulk-trading__mode-toggle {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.bulk-trading__mode-btn {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid var(--general-section-1, #d6dadb);
+    border-radius: 0.8rem;
+    background: transparent;
+    color: inherit;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    &--active {
+        border-color: #2c8b8a;
+        background: #2c8b8a;
+        color: #fff;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Scanner mode
+// ---------------------------------------------------------------------------
+
+.bt-scanner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.bt-scanner__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    &--three {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.bt-scanner__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    opacity: 0.75;
+
+    select,
+    input {
+        padding: 1.1rem 1rem;
+        border: 1px solid #d8dbde;
+        border-radius: 0.7rem;
+        background: #eef0f2;
+        color: #1a1a1a;
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-transform: none;
+        width: 100%;
+
+        &:focus {
+            outline: none;
+            border-color: #2c8b8a;
+        }
+    }
+}
+
+.bt-scanner__field--barrier {
+    gap: 0.6rem;
+}
+
+.bt-scanner__barrier-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.bt-scanner__barrier-digit {
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    border: 1px solid #d8dbde;
+    background: #eef0f2;
+    font-weight: 700;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    &--active {
+        background: #2c8b8a;
+        border-color: #2c8b8a;
+        color: #fff;
+    }
+}
+
+.bt-scanner__sample-input {
+    text-align: center;
+    font-size: 1.8rem !important;
+}
+
+.bt-scanner__current-tick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0 0.2rem;
+}
+
+.bt-scanner__current-tick-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.6;
+}
+
+.bt-scanner__live-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: #2ecf7d;
+    box-shadow: 0 0 0 0 rgba(46, 207, 125, 0.6);
+    animation: bt-pulse 1.4s ease-out infinite;
+}
+
+@keyframes bt-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46, 207, 125, 0.55);
+    }
+    100% {
+        box-shadow: 0 0 0 0.6rem rgba(46, 207, 125, 0);
+    }
+}
+
+.bt-scanner__current-tick-value {
+    font-size: 3.4rem;
+    font-weight: 800;
+    color: #2c8b8a;
+    line-height: 1;
+}
+
+.bt-scanner__error {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    border-radius: 0.7rem;
+    background: #fff1f2;
+    color: #b91c1c;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.bt-scanner__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1.1rem;
+    border-radius: 0.8rem;
+    border: 1px solid #35e07b;
+    background: #0c0f0e;
+    color: #35e07b;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    box-shadow: 0 0 1.2rem rgba(53, 224, 123, 0.35);
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 0 1.6rem rgba(53, 224, 123, 0.55);
+    }
+}
+
+.bt-scanner__toggle-icon {
+    display: flex;
+}
+
+.bt-scanner__toggle-caret {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-right: 0.2rem solid currentColor;
+    border-bottom: 0.2rem solid currentColor;
+    transform: rotate(45deg);
+    margin-left: 0.2rem;
+    transition: transform 0.15s ease;
+}
+
+.bt-scanner__toggle--open .bt-scanner__toggle-caret {
+    transform: rotate(-135deg);
+}
+
+.bt-digits {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: 1.6rem;
+    column-gap: 0.6rem;
+    justify-items: center;
+    padding: 0.4rem 0;
+}
+
+.bt-digit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bt-digit__circle {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 6.2rem;
+    height: 6.2rem;
+    border-radius: 50%;
+    background: #f2f3f5;
+    border: 0.3rem solid #e3e5e8;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+    &--special {
+        border-color: var(--ring-color);
+        box-shadow: 0 0 0 0.1rem var(--ring-color) inset;
+    }
+
+    &--current {
+        border-color: #e5484d;
+        box-shadow: 0 0 0 0.2rem rgba(229, 72, 77, 0.28);
+        transform: scale(1.06);
+    }
+}
+
+.bt-digit__cursor {
+    position: absolute;
+    top: -0.9rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 0.6rem solid transparent;
+    border-right: 0.6rem solid transparent;
+    border-top: 0.9rem solid #e5484d;
+}
+
+.bt-digit__number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.bt-digit__percent {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #4a4f54;
+}
+
+.bt-eo-strip {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    padding-top: 0.2rem;
+}
+
+.bt-eo-strip__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.bt-eo-strip__chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.6rem;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: #fff;
+
+    &--even {
+        background: #2c9a8f;
+    }
+
+    &--odd {
+        background: #e5484d;
+    }
+}
+
+.bt-autotrader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.1rem;
+    border: 1px solid #d8dbde;
+    border-radius: 0.8rem;
+    background: #eef0f2;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    &--armed {
+        border-color: #2c8b8a;
+        background: rgba(44, 139, 138, 0.12);
+        color: #2c8b8a;
+    }
+}
+
+.bt-autotrader__gear {
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    border: 0.2rem solid currentColor;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -0.35rem;
+        border-radius: 50%;
+        border: 0.15rem dashed currentColor;
+        opacity: 0.6;
+    }
+}
+
+.bt-scanner__login-hint {
+    margin: -0.4rem 0 0;
+    padding: 1rem 1.2rem;
+    border-radius: 0.8rem;
+    background: rgba(255, 152, 0, 0.12);
+    color: #9a5b00;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-align: center;
+}
+
+.bt-buy-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.bt-buy-buttons__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 1.4rem 1rem;
+    border: 0;
+    border-radius: 0.6rem;
+    color: #fff;
+    cursor: pointer;
+    clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
+    transition: transform 0.1s ease, opacity 0.15s ease;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &--teal {
+        background: linear-gradient(135deg, #2c9a8f, #1f6f66);
+    }
+
+    &--red {
+        background: linear-gradient(135deg, #e5484d, #b8262b);
+    }
+}
+
+.bt-buy-buttons__label {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.bt-buy-buttons__payout {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.bt-buy-buttons__percent {
+    font-size: 1.2rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.bt-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    border: 1px solid #3a2f00;
+    background: #1a1400;
+    color: #f5a623;
+    cursor: pointer;
+}
+
+.bt-warning__text {
+    margin: -0.6rem 0 0;
+    padding: 0.9rem 1rem;
+    border-radius: 0.7rem;
+    background: #fff8e6;
+    border: 1px solid #f5d685;
+    color: #7a5a00;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.bt-scanner__summary {
+    margin: 0;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    opacity: 0.75;
+}
+
+.bt-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    background: #10131a;
+    color: #cfd4d9;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.bt-status-bar__dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: #5a606a;
+
+    &--live {
+        background: #2ecf7d;
+        box-shadow: 0 0 0 0 rgba(46, 207, 125, 0.6);
+        animation: bt-pulse 1.4s ease-out infinite;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Accounts mode (unchanged)
+// ---------------------------------------------------------------------------
+
+.bulk-trading__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.bulk-trading__hint {
+    margin: 0;
+    font-size: 1.2rem;
+    opacity: 0.75;
+}
+
+.bulk-trading__empty {
+    font-size: 1.2rem;
+    opacity: 0.75;
+}
+
+.bulk-trading__account-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    opacity: 0.75;
+}
+
+.bulk-trading__select-all-btn {
+    border: 0;
+    background: transparent;
+    color: #2c8b8a;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+.bulk-trading__account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    border: 1px solid var(--general-section-1, #d6dadb);
+    border-radius: 1rem;
+    max-height: 28rem;
+    overflow-y: auto;
+}
+
+.bulk-trading__account {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 0.8rem;
+    font-size: 1.3rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        background: var(--general-section-1, #f4f5f6);
+    }
+
+    &--checked {
+        border-color: #2c8b8a;
+        background: rgba(44, 139, 138, 0.08);
+    }
+
+    input {
+        width: 1.6rem;
+        height: 1.6rem;
+        accent-color: #2c8b8a;
+        cursor: pointer;
+    }
+}
+
+.bulk-trading__account-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2c9a8f, #1f6f66);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.bulk-trading__account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.bulk-trading__account-loginid {
+    font-weight: 600;
+}
+
+.bulk-trading__account-meta {
+    font-size: 1.05rem;
+    opacity: 0.65;
+}
+
+.bulk-trading__badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    &--demo {
+        background: rgba(75, 180, 179, 0.15);
+        color: #2c8b8a;
+    }
+}
+
+.bulk-trading__fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1rem;
+}
+
+.bulk-trading__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    select,
+    input {
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--general-section-1, #d6dadb);
+        border-radius: 0.8rem;
+        font-size: 1.3rem;
+        transition: border-color 0.15s ease;
+
+        &:focus {
+            outline: none;
+            border-color: #2c8b8a;
+        }
+    }
+}
+
+.bulk-trading__run-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    border: 0;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #4bb4b3, #2c8b8a);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.15s ease;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.bulk-trading__spinner {
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 0.25rem solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: bulk-trading-spin 0.7s linear infinite;
+}
+
+@keyframes bulk-trading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.bulk-trading__results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bulk-trading__result {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 0.8rem;
+    font-size: 1.2rem;
+
+    &--ok {
+        background: rgba(75, 180, 179, 0.12);
+        color: #2c8b8a;
+    }
+
+    &--error {
+        background: rgba(236, 63, 63, 0.1);
+        color: #ec3f3f;
+    }
+}
+
+.bulk-trading__result-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.bulk-trading__result--ok .bulk-trading__result-icon {
+    background: #2c8b8a;
+}
+
+.bulk-trading__result--error .bulk-trading__result-icon {
+    background: #ec3f3f;
+}
