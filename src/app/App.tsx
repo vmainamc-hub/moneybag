@@ -4,12 +4,14 @@ import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterP
 import ChunkLoader from '@/components/loader/chunk-loader';
 import LocalStorageSyncWrapper from '@/components/localStorage-sync-wrapper';
 import RoutePromptDialog from '@/components/route-prompt-dialog';
+import { generateOAuthURL } from '@/components/shared';
 import { useAccountSwitching } from '@/hooks/useAccountSwitching';
 import { useLanguageFromURL } from '@/hooks/useLanguageFromURL';
 import { useOAuthCallback } from '@/hooks/useOAuthCallback';
 import { StoreProvider } from '@/hooks/useStore';
 import { OAuthTokenExchangeService } from '@/services/oauth-token-exchange.service';
 import { isDemoAccount } from '@/utils/account-helpers';
+import { Button } from '@deriv-com/ui';
 import { initializeI18n, localize, TranslationProvider } from '@deriv-com/translations';
 import CoreStoreProvider from './CoreStoreProvider';
 import ErrorBoundary from './ErrorBoundary';
@@ -165,6 +167,57 @@ function storeLegacyAccounts(accounts: import('@/hooks/useOAuthCallback').Legacy
 }
 
 /**
+ * Shown when the OAuth callback fails (Deriv error, invalid state, or the
+ * server-side code exchange / account bootstrap failing). The app must NOT
+ * mount as if the login had succeeded, so the user gets an explicit message
+ * and a way to retry instead of silently landing on the logged-out app.
+ */
+const OAuthErrorScreen = ({ message }: { message: string }) => {
+    const [isRetrying, setIsRetrying] = React.useState(false);
+
+    const handleRetry = async () => {
+        setIsRetrying(true);
+        try {
+            const url = await generateOAuthURL();
+            if (url) {
+                window.location.replace(url);
+                return;
+            }
+        } catch (err) {
+            console.error('[OAuth] Failed to start a new login attempt:', err);
+        }
+        window.location.replace(window.location.origin);
+    };
+
+    return (
+        <div
+            role='alert'
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                minHeight: '100vh',
+                padding: '24px',
+                textAlign: 'center',
+            }}
+        >
+            <h2>{localize('We could not complete your Deriv login')}</h2>
+            <p style={{ maxWidth: 480 }}>{message}</p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+                <Button onClick={handleRetry} disabled={isRetrying}>
+                    {localize('Try again')}
+                </Button>
+                <Button variant='outlined' onClick={() => window.location.replace(window.location.origin)}>
+                    {localize('Back to home')}
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+/**
  * Main App component
  *
  * Responsibilities:
@@ -175,6 +228,7 @@ function storeLegacyAccounts(accounts: import('@/hooks/useOAuthCallback').Legacy
 function App() {
     const { isProcessing, isValid, params, legacyAccounts, error, cleanupURL } = useOAuthCallback();
     const [oauthBootstrapReady, setOauthBootstrapReady] = React.useState(false);
+    const [oauthError, setOauthError] = React.useState<string | null>(null);
 
     useAccountSwitching();
 
@@ -198,16 +252,24 @@ function App() {
                 try {
                     const response = await OAuthTokenExchangeService.exchangeCodeForToken(params.code!);
                     if (cancelled) return;
+                    cleanupURL();
                     if (!response.access_token) {
+                        // Exchange or account bootstrap failed: surface it instead of
+                        // silently mounting the logged-out app.
                         console.error('❌ Token exchange failed:', response.error, response.error_description);
+                        setOauthError(
+                            response.error_description ||
+                                response.error ||
+                                localize('The login could not be completed. Please try again.')
+                        );
+                        return;
                     }
+                    setOauthBootstrapReady(true);
                 } catch (err) {
-                    if (!cancelled) console.error('❌ Token exchange request failed:', err);
-                } finally {
-                    if (!cancelled) {
-                        cleanupURL();
-                        setOauthBootstrapReady(true);
-                    }
+                    if (cancelled) return;
+                    console.error('❌ Token exchange request failed:', err);
+                    cleanupURL();
+                    setOauthError(localize('The login could not be completed. Please try again.'));
                 }
             })();
             return () => {
@@ -215,9 +277,17 @@ function App() {
             };
         }
 
-        if (error) console.error('OAuth callback error:', error);
+        if (error) {
+            console.error('OAuth callback error:', error);
+            setOauthError(error);
+            return;
+        }
         setOauthBootstrapReady(true);
     }, [isProcessing, isValid, params.code, legacyAccounts, error, cleanupURL]);
+
+    if (oauthError) {
+        return <OAuthErrorScreen message={oauthError} />;
+    }
 
     if (!oauthBootstrapReady) {
         return <ChunkLoader message={localize('Connecting to Deriv...')} />;
