@@ -280,7 +280,7 @@ const OPTIMUM_BOTS: TBot[] = [
     {
         id: 'candle-mine-v3-updated',
         name: 'Candle Mine v3 Updated',
-        file: '3 Updated Version Of Candle Mine????.xml',
+        file: '3 Updated Version Of Candle Mine.xml',
         description: 'Improved Candle Mine strategy for pattern trading.',
         emoji: '🕯️',
     },
@@ -350,7 +350,7 @@ const OPTIMUM_BOTS: TBot[] = [
     {
         id: 'hennessy-matrix-v5',
         name: 'Hennessy Matrix V5 Original',
-        file: 'HENNESSY?? _MATRIX V5 BOT Orig..xml',
+        file: 'HENNESSY_MATRIX V5 BOT Orig..xml',
         description: 'Original Hennessy Matrix V5 with matrix logic.',
         emoji: '🔷',
     },
@@ -378,7 +378,7 @@ const OPTIMUM_BOTS: TBot[] = [
     {
         id: 'mask-matches-speed',
         name: 'Mask Matches Speed Bot',
-        file: 'mask matches speed bot ??.xml',
+        file: 'mask-matches-speed-bot.xml',
         description: 'Speed-optimised matches/differs mask bot.',
         emoji: '🏃',
     },
@@ -413,7 +413,7 @@ const OPTIMUM_BOTS: TBot[] = [
     {
         id: 'scaucer-speed',
         name: 'Scaucer Speed Bot',
-        file: 'SCAUCER SPEED BOT ????.xml',
+        file: 'SCAUCER SPEED BOT.xml',
         description: 'High-velocity Scaucer speed trading bot.',
         emoji: '💨',
     },
