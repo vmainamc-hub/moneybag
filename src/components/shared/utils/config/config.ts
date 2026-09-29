@@ -959,10 +959,10 @@ export const getDomainConfig = (activeHostname = window.location.hostname): Doma
         redirectUri: process.env.REDIRECT_URI || window.location.origin,
         botsFolder: process.env.BOTS_FOLDER || DEFAULT_BOTS_FOLDER,
         canonicalHost: hostname,
-        includeLegacyAppIdInOAuth: true,
-        // A Deriv APP ID is sufficient for the legacy OAuth callback flow.
-        // If a modern OAuth CLIENT_ID is supplied, use the PKCE flow instead.
-        useLegacyOAuthLogin: !(process.env.CLIENT_ID || ''),
+        // MoneyBag production uses Deriv OAuth 2.0 Authorization Code + PKCE.
+        // Legacy OAuth is opt-in only; do not silently downgrade when CLIENT_ID is missing.
+        includeLegacyAppIdInOAuth: false,
+        useLegacyOAuthLogin: process.env.LEGACY_OAUTH_ENABLED === 'true',
         features: DEFAULT_DOMAIN_FEATURES,
         ui: DEFAULT_DOMAIN_UI,
         derivSignupUrl: DEFAULT_DERIV_SIGNUP_URL,
