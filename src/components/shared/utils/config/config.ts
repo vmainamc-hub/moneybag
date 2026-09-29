@@ -955,12 +955,14 @@ export const getDomainConfig = (activeHostname = window.location.hostname): Doma
     // Fallback — used on localhost and Replit dev domains
     return {
         clientId: process.env.CLIENT_ID || '',
-        appId: process.env.APP_ID || '71937',
+        appId: process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '71937',
         redirectUri: process.env.REDIRECT_URI || window.location.origin,
         botsFolder: process.env.BOTS_FOLDER || DEFAULT_BOTS_FOLDER,
         canonicalHost: hostname,
         includeLegacyAppIdInOAuth: true,
-        useLegacyOAuthLogin: false,
+        // A Deriv APP ID is sufficient for the legacy OAuth callback flow.
+        // If a modern OAuth CLIENT_ID is supplied, use the PKCE flow instead.
+        useLegacyOAuthLogin: !(process.env.CLIENT_ID || ''),
         features: DEFAULT_DOMAIN_FEATURES,
         ui: DEFAULT_DOMAIN_UI,
         derivSignupUrl: DEFAULT_DERIV_SIGNUP_URL,
