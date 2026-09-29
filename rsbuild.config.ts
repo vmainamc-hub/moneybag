@@ -25,7 +25,8 @@ export default defineConfig({
             'process.env': {
                 APP_ENV: JSON.stringify(process.env.APP_ENV || 'production'),
                 CLIENT_ID: JSON.stringify(process.env.CLIENT_ID),
-                APP_ID: JSON.stringify(process.env.APP_ID),
+                APP_ID: JSON.stringify(process.env.APP_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID),
+                NEXT_PUBLIC_DERIV_APP_ID: JSON.stringify(process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID),
                 REDIRECT_URI: JSON.stringify(process.env.REDIRECT_URI || ''),
                 GD_CLIENT_ID: JSON.stringify(process.env.GD_CLIENT_ID),
                 GD_APP_ID: JSON.stringify(process.env.GD_APP_ID),
