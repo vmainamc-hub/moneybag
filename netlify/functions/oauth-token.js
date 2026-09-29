@@ -10,12 +10,12 @@ exports.handler = async (event) => {
 
     try {
         const body = JSON.parse(event.body || '{}');
-        const { code, code_verifier, redirect_uri, client_id } = body;
+        const { grant_type = 'authorization_code', code, code_verifier, redirect_uri, client_id, refresh_token } = body;
         const configuredClientId = process.env.CLIENT_ID || '';
         const clientSecret = process.env.DERIV_CLIENT_SECRET || '';
         const configuredRedirectUri = process.env.REDIRECT_URI || '';
 
-        if (!code || !code_verifier || !redirect_uri || !client_id) {
+        if (!client_id || (grant_type === 'authorization_code' && (!code || !code_verifier || !redirect_uri)) || (grant_type === 'refresh_token' && !refresh_token)) {
             return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_request', error_description: 'code, code_verifier, redirect_uri and client_id are required' }) };
         }
         if (!configuredClientId || client_id !== configuredClientId) {
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
         if (!clientSecret) {
             return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'server_configuration_error', error_description: 'DERIV_CLIENT_SECRET is not configured on the server.' }) };
         }
-        if (!configuredRedirectUri || redirect_uri !== configuredRedirectUri) {
+        if (grant_type === 'refresh_token') {\n            const refreshParams = new URLSearchParams({ grant_type: 'refresh_token', client_id: configuredClientId, client_secret: clientSecret, refresh_token });\n            const refreshResponse = await fetch('https://auth.deriv.com/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: refreshParams.toString() });\n            const refreshData = await refreshResponse.json();\n            return { statusCode: refreshResponse.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(refreshData) };\n        }\n\n        if (!configuredRedirectUri || redirect_uri !== configuredRedirectUri) {
             return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_redirect_uri', error_description: 'The redirect URI does not match the configured OAuth redirect URI.' }) };
         }
 
