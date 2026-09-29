@@ -24,7 +24,14 @@ exports.handler = async (event) => {
         if (!clientSecret) {
             return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'server_configuration_error', error_description: 'DERIV_CLIENT_SECRET is not configured on the server.' }) };
         }
-        if (grant_type === 'refresh_token') {\n            const refreshParams = new URLSearchParams({ grant_type: 'refresh_token', client_id: configuredClientId, client_secret: clientSecret, refresh_token });\n            const refreshResponse = await fetch('https://auth.deriv.com/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: refreshParams.toString() });\n            const refreshData = await refreshResponse.json();\n            return { statusCode: refreshResponse.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(refreshData) };\n        }\n\n        if (!configuredRedirectUri || redirect_uri !== configuredRedirectUri) {
+        if (grant_type === 'refresh_token') {
+            const refreshParams = new URLSearchParams({ grant_type: 'refresh_token', client_id: configuredClientId, client_secret: clientSecret, refresh_token });
+            const refreshResponse = await fetch('https://auth.deriv.com/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: refreshParams.toString() });
+            const refreshData = await refreshResponse.json();
+            return { statusCode: refreshResponse.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(refreshData) };
+        }
+
+        if (!configuredRedirectUri || redirect_uri !== configuredRedirectUri) {
             return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_redirect_uri', error_description: 'The redirect URI does not match the configured OAuth redirect URI.' }) };
         }
 
