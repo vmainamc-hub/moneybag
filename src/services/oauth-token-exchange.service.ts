@@ -124,8 +124,7 @@ export class OAuthTokenExchangeService {
      */
     static async exchangeCodeForToken(code: string): Promise<TokenExchangeResponse> {
         try {
-            const baseURL = this.getOAuth2BaseURL();
-            const tokenEndpoint = `${baseURL}token`;
+            const tokenEndpoint = '/api/oauth/token';
 
             // Retrieve the PKCE code verifier from session storage
             const codeVerifier = getCodeVerifier();
@@ -162,21 +161,21 @@ export class OAuthTokenExchangeService {
             // which domain the user is visiting from.
             const redirectUrl = getDomainConfig().redirectUri;
 
-            const requestBody = new URLSearchParams({
-                grant_type: 'authorization_code',
-                code: code,
-                client_id: clientId,
-                redirect_uri: redirectUrl,
-                code_verifier: codeVerifier, // PKCE: Include code verifier
-            });
-
+            // The authorization-code exchange is deliberately server-side.
+            // Deriv's current OAuth documentation requires the backend to call
+            // /oauth2/token; the browser sends only the one-time code + PKCE verifier
+            // to our same-origin Netlify Function.
             const response = await fetch(tokenEndpoint, {
                 method: 'POST',
-                credentials: 'include', // Include cookies for session-based auth
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: requestBody.toString(),
+                body: JSON.stringify({
+                    code,
+                    code_verifier: codeVerifier,
+                    client_id: clientId,
+                    redirect_uri: redirectUrl,
+                }),
             });
 
             // Parse response
