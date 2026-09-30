@@ -908,6 +908,16 @@ export const DOMAIN_CONFIG: Record<string, DomainConfig> = {
         },
     }),
     ...createHostedDomainEntries({
+        primaryDomain: 'dynamic-kelpie-0708c4.netlify.app',
+        clientId: '34xH6e3NlK0tqfZuahfVj',
+        appId: '',
+        redirectUri: 'https://dynamic-kelpie-0708c4.netlify.app',
+        botsFolder: 'dynamic-kelpie-0708c4.netlify.app',
+        includeLegacyAppIdInOAuth: false,
+        useLegacyOAuthLogin: false,
+        ui: { brandName: 'MoneyBag' },
+    }),
+    ...createHostedDomainEntries({
         primaryDomain: 'dtraders.site',
         aliases: ['www.dtraders.site'],
         clientId: '342ZptAalH6mEqAfiqXE9',
