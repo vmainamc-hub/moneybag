@@ -1137,12 +1137,18 @@ export const applyDomainUI = (): void => {
     }
 };
 
-export const buildBestBotsFileUrl = (bots_folder: string, file_name: string) => {
-    const folder = encodeURI(bots_folder);
-    return `/${folder}/${encodeURIComponent(file_name)}`;
-};
+const LOCAL_BOTS_BASE_PATH = '/bots';
 
-export const getBestBotsFileUrl = (file_name: string) => buildBestBotsFileUrl(getBestBotsFolder(), file_name);
+// MoneyBag ships its bot catalogue and XML assets with the application itself.
+// This URL builder intentionally ignores the active hostname/domain folder so the
+// deployed app never reaches out to another site or repository for bot files.
+export const buildBestBotsFileUrl = (_bots_folder: string, file_name: string) =>
+    `${LOCAL_BOTS_BASE_PATH}/${file_name
+        .split('/')
+        .map(segment => encodeURIComponent(segment))
+        .join('/')}`;
+
+export const getBestBotsFileUrl = (file_name: string) => buildBestBotsFileUrl('bots', file_name);
 
 // =============================================================================
 // Constants - Server Configuration (from brand.config.json)
