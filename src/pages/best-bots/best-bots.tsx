@@ -587,6 +587,11 @@ const BotCard = observer(({ bot, stats }: { bot: TBot; stats: TBotStats | undefi
             const res = await fetch(url);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const xml_text = await res.text();
+            // The Netlify SPA fallback answers missing files with index.html and HTTP 200,
+            // so res.ok alone cannot detect a missing XML asset.
+            if (/^\s*<(!doctype\s+html|html)[\s>]/i.test(xml_text)) {
+                throw new Error(`Bot file not found: ${bot.file}`);
+            }
             let workspace = window.Blockly?.derivWorkspace;
             if (!workspace) {
                 // Mount Bot Builder so its Blockly workspace initialises, then wait for it.
@@ -788,7 +793,12 @@ const BestBots = () => {
                 const dynamicBots = manifestBots
                     .filter(bot => bot?.file?.toLowerCase().endsWith('.xml'))
                     .map(createManifestBot);
-                const mergedBots = [...configuredBots];
+                // bots.json is the authoritative list of files shipped in this folder;
+                // drop hard-coded catalog entries whose XML is not in it.
+                const manifestFiles = new Set(dynamicBots.map(bot => bot.file));
+                const mergedBots = manifestFiles.size
+                    ? configuredBots.filter(bot => manifestFiles.has(bot.file))
+                    : [...configuredBots];
                 const seenFiles = new Set(mergedBots.map(bot => bot.file));
 
                 dynamicBots.forEach(bot => {
