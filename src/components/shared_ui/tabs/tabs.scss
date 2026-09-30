@@ -3,6 +3,7 @@
 .dc-tabs {
     position: relative;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
 
     &--top {
         grid-template-rows: auto 1fr;
