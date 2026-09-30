@@ -8,6 +8,7 @@ jest.mock('@/hooks/useStore', () => ({
 }));
 
 import { getBestBotsForFolder } from '../best-bots';
+import { getBestBotsFileUrl } from '@/components/shared';
 
 describe('Best Bots domain catalogs', () => {
     it('uses Termica-branded names for the TermicaFX folder', () => {
@@ -29,7 +30,7 @@ describe('Best Bots domain catalogs', () => {
             id: 'double-under-bot',
             name: 'Double Under bot',
             file: 'Double Under bot.xml',
-            guide_file: 'Mighty_Double_Under_Bot_Quick_Guide.pdf',
+            guide_file: 'guides/Mighty_Double_Under_Bot_Quick_Guide.pdf',
             is_premium: true,
             priority: 1,
         });
@@ -41,6 +42,13 @@ describe('Best Bots domain catalogs', () => {
             name: 'grffy v1',
             file: 'grffy v1.xml',
         });
+    });
+
+    it('resolves bot assets only from the bundled /bots path', () => {
+        expect(getBestBotsFileUrl('Double Under bot.xml')).toBe('/bots/Double%20Under%20bot.xml');
+        expect(getBestBotsFileUrl('guides/Mighty_Double_Under_Bot_Quick_Guide.pdf')).toBe(
+            '/bots/guides/Mighty_Double_Under_Bot_Quick_Guide.pdf'
+        );
     });
 
     it('does not leak another domain catalog for an unknown folder', () => {
