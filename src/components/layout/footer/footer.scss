@@ -7,10 +7,9 @@
     flex-direction: row-reverse;
     padding: 0 var(--space-3);
     align-items: center;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
+    // In normal flow as the last child of the flex-column .layout, so
+    // .main-body shrinks by the footer's height.
+    flex: 0 0 3.6rem;
     border-top: 1px solid var(--general-section-1);
     box-shadow: var(--shadow-sm);
     background: var(--rm-shell-run-panel);
