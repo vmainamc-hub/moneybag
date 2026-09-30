@@ -13,8 +13,8 @@ exports.handler = async (event) => {
         const { grant_type = 'authorization_code', code, code_verifier, redirect_uri, client_id, refresh_token } = body;
         const normalizedClientId = typeof client_id === 'string' ? client_id.trim() : '';
         const normalizedRedirectUri = typeof redirect_uri === 'string' ? redirect_uri.trim() : '';
-        const configuredClientId = (process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '').trim();
-        const configuredRedirectUri = 'https://stellar-liger-0aa194.netlify.app';
+        const configuredClientId = (process.env.CLIENT_ID || process.env.NEXT_PUBLIC_DERIV_APP_ID || process.env.APP_ID || '34xH6e3NlK0tqfZuahfVj').trim();
+        const configuredRedirectUri = (process.env.REDIRECT_URI || 'https://dynamic-kelpie-0708c4.netlify.app').trim();
 
         if (!normalizedClientId || (grant_type === 'authorization_code' && (!code || !code_verifier || !normalizedRedirectUri)) || (grant_type === 'refresh_token' && !refresh_token)) {
             return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'invalid_request', error_description: 'code, code_verifier, redirect_uri and client_id are required' }) };
