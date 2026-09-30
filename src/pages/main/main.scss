@@ -320,17 +320,14 @@
         inset-inline-end: 1.6rem;
         top: 1.6rem;
         z-index: 2;
-        width: min(100%, 33.6rem);
-        max-width: min(33.6rem, calc(100vw - 43rem));
+        // Must match .run-panel__container (36.6rem, run-panel.scss): the drawer
+        // is laid out from this wrapper's left edge.
+        width: 36.6rem;
+        max-width: 36.6rem;
         min-width: 0;
 
         @include desktop-screen {
             position: absolute;
-        }
-
-        @media (width <= 1400px) {
-            width: min(100%, 29.6rem);
-            max-width: min(29.6rem, calc(100vw - 41rem));
         }
 
         .animation {
