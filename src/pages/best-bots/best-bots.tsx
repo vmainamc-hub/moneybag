@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { getBestBotsFileUrl, getBestBotsFolder } from '@/components/shared';
+import { getBestBotsFileUrl } from '@/components/shared';
 import Modal from '@/components/shared_ui/modal';
 import { DBOT_TABS } from '@/constants/bot-contents';
 import { load, save_types } from '@/external/bot-skeleton';
@@ -774,12 +774,11 @@ const BotCard = observer(({ bot, stats }: { bot: TBot; stats: TBotStats | undefi
 });
 
 const BestBots = () => {
-    const botsFolder = getBestBotsFolder();
-    const [bots, setBots] = useState<TBot[]>(() => getBestBotsForFolder(botsFolder));
+    const [bots, setBots] = useState<TBot[]>(() => ALL_CURATED_BOTS);
 
     useEffect(() => {
         let isMounted = true;
-        const configuredBots = getBestBotsForFolder(botsFolder);
+        const configuredBots = ALL_CURATED_BOTS;
 
         setBots(configuredBots);
 
@@ -817,7 +816,7 @@ const BestBots = () => {
         return () => {
             isMounted = false;
         };
-    }, [botsFolder]);
+    }, []);
 
     const rankedBots = [...bots].sort((a, b) => {
         const priorityA = a.priority ?? (a.is_premium ? 1 : 999);

@@ -912,8 +912,8 @@ export const DOMAIN_CONFIG: Record<string, DomainConfig> = {
         clientId: '34xH6e3NlK0tqfZuahfVj',
         appId: '',
         redirectUri: 'https://dynamic-kelpie-0708c4.netlify.app',
-        // Reuse the existing curated bot asset catalogue; this hostname has no public bot folder of its own.
-        botsFolder: 'optimumtraders.site',
+        // Bot assets are bundled in this repository under /public/bots; no external bot host is used.
+        botsFolder: 'bots',
         includeLegacyAppIdInOAuth: false,
         useLegacyOAuthLogin: false,
         ui: { brandName: 'MoneyBag' },
